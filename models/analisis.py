@@ -2,8 +2,10 @@ import streamlit as st
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
+import numpy as np
 from sklearn.ensemble import IsolationForest
 from sklearn.preprocessing import StandardScaler
+from scipy import stats
 
 def cargar_archivos(archivos):
     for archivo in archivos:
@@ -147,42 +149,45 @@ def outliers(df: pd.DataFrame):
     df = df.copy()
 
 
-    df_numericos = df.select_dtypes(include=['int64','float64'])
+    numericos = df.select_dtypes(include=[np.number])
 
-    if df_numericos.empty:
+    if numericos.empty:
         st.warning("No hay columnas numéricas en el archivo.")
     else:
-        scalado = StandardScaler()
 
-        scalado_data = scalado.fit_transform(df_numericos)
+        for columnas in numericos.columns:
 
-        st.subheader("Análisis de Outliers")
-        contaminacion = st.slider("Proporción estimada de outliers (contamination)", 0.01, 0.2)
-
-
-        iso_forest = IsolationForest(contamination=contaminacion, random_state=42)
-        outliers = iso_forest.fit_predict(scalado_data)
-
-        df['outlier_iso'] = outliers
-
-        st.write("Cantidad de outliers detectados:")
-        st.write(df['outlier_iso'].value_counts())
+            #uso de Z-Score
+            z_cores = np.abs(stats.zscore(numericos[columnas]))
+            df[f'{columnas}_z_outlier'] = z_cores > 3
 
 
-        # Mostrar tabla con outliers
-        st.subheader("Outliers detectados")
-        st.dataframe(df[df['outlier_iso'] == -1])
+            #Uso de #IQR
+            Q1 = numericos[columnas].quantile(0.25)
+            Q3 = numericos[columnas].quantile(0.75)
+            IQR = Q3 - Q1
+            lim_inf = Q1 - 1.5 * IQR
+            lim_sup = Q3 + 1.5 * IQR
+            df[f'{columnas}_iqr_outlier'] = ~numericos[columnas].between(lim_inf, lim_sup)
 
-        # Selector de columna numérica para visualizar boxplot
-        columna_seleccionada = st.selectbox("Selecciona la columna numérica para ver el boxplot", df_numericos.columns)
+        # Uso del Isolation Forest
+        iso_forest = IsolationForest(contamination=0.1, random_state=42)
 
-        # Graficar boxplot solo para la columna seleccionada
-        plt.figure(figsize=(8, 4))
-        sns.boxplot(x=df['outlier_iso'], y=df[columna_seleccionada])
-        plt.title(f"Boxplot de {columna_seleccionada} según clasificación de outliers")
-        plt.xlabel("Outlier (-1) / Normal (+1)")
-        st.pyplot(plt)
-        plt.clf()
+        df['iso_outlier'] = iso_forest.fit_predict(numericos) == -1
+
+        print(df)
+
+        #Mostrar los datos que son outliers
+        outliers = df[df.filter(like='_outlier').any(axis=1)]
+        st.subheader("Filas detectadas como outliers")
+        st.dataframe(outliers)
+
+        columna = st.selectbox("Selecciona la variable a analizar", df.select_dtypes(include='number').columns)
+        st.subheader(f"Boxplot para {columna}")
+        fig, ax = plt.subplots()
+        sns.boxplot(x=df[columna], ax=ax)
+        st.pyplot(fig)
+
 
 
       
