@@ -2,8 +2,8 @@ import streamlit as st
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
-
-
+from sklearn.ensemble import IsolationForest
+from sklearn.preprocessing import StandardScaler
 
 def cargar_archivos(archivos):
     for archivo in archivos:
@@ -140,3 +140,49 @@ def analisis_exploratorio(df: pd.DataFrame):
         df[variable_cat].value_counts().plot(kind='bar', ax=ax)
         ax.set_title(f"Distribución de {variable_cat}")
         st.pyplot(fig)
+
+
+def outliers(df: pd.DataFrame):
+
+    df = df.copy()
+
+
+    df_numericos = df.select_dtypes(include=['int64','float64'])
+
+    if df_numericos.empty:
+        st.warning("No hay columnas numéricas en el archivo.")
+    else:
+        scalado = StandardScaler()
+
+        scalado_data = scalado.fit_transform(df_numericos)
+
+        st.subheader("Análisis de Outliers")
+        contaminacion = st.slider("Proporción estimada de outliers (contamination)", 0.01, 0.2)
+
+
+        iso_forest = IsolationForest(contamination=contaminacion, random_state=42)
+        outliers = iso_forest.fit_predict(scalado_data)
+
+        df['outlier_iso'] = outliers
+
+        st.write("Cantidad de outliers detectados:")
+        st.write(df['outlier_iso'].value_counts())
+
+
+        # Mostrar tabla con outliers
+        st.subheader("Outliers detectados")
+        st.dataframe(df[df['outlier_iso'] == -1])
+
+        # Selector de columna numérica para visualizar boxplot
+        columna_seleccionada = st.selectbox("Selecciona la columna numérica para ver el boxplot", df_numericos.columns)
+
+        # Graficar boxplot solo para la columna seleccionada
+        plt.figure(figsize=(8, 4))
+        sns.boxplot(x=df['outlier_iso'], y=df[columna_seleccionada])
+        plt.title(f"Boxplot de {columna_seleccionada} según clasificación de outliers")
+        plt.xlabel("Outlier (-1) / Normal (+1)")
+        st.pyplot(plt)
+        plt.clf()
+
+
+      

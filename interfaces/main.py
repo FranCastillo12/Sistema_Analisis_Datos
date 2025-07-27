@@ -5,7 +5,7 @@ import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 
-from models.info_resumen import *
+from models.analisis import *
 
 
 
@@ -21,8 +21,8 @@ menu = st.sidebar.radio(
         "1. Carga de archivos",
         "2. Análisis exploratorio",
         "3. Detección de valores atípicos",
-        "4. Agrupamiento automático",
-        "5. Relaciones entre variable",
+        "",
+        "",
         "",
         ""
     )
@@ -56,6 +56,13 @@ if menu == "2. Análisis exploratorio":
     if st.session_state.df_actual is not None:
         df = st.session_state.df_actual
         analisis_exploratorio(df)
+    else:
+        st.warning("Primero debes cargar un archivo en la opción 1.")
+if menu == '3. Detección de valores atípicos':
+    st.header("3. Detección de valores atípicos")
+    if st.session_state.df_actual is not None:
+        df = st.session_state.df_actual
+        outliers(df)
     else:
         st.warning("Primero debes cargar un archivo en la opción 1.")
 
