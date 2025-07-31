@@ -8,8 +8,6 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from models.analisis import *
 
 
-
-
 st.set_page_config(page_title="Análisis Automático de Datos", layout="wide")
 
 st.title("Sistema Inteligente de Análisis Automatizado de Datos")
@@ -25,14 +23,17 @@ menu = st.sidebar.radio(
 )
 
 
-# Variable global para almacenar datos cargados
+# Variables global para almacenar datos cargados
+#diccionario para guardar todos los archivos que se suben
 if "data_diccio" not in st.session_state:
     st.session_state.data_diccio = {}
+
+#Se guarda el cvs que se esta analizando en ese momento
 if "df_actual" not in st.session_state:
     st.session_state.df_actual = None
 
 
-# --- Sección 1: Carga de archivos ---
+# --- Sección 1. Carga de archivos ---
 if menu == "1. Carga de archivos":
     st.header("1. Carga de archivos")
 
@@ -45,6 +46,8 @@ if menu == "1. Carga de archivos":
         cargar_archivos(uploaded_files)
 
     mostrar_archivos()
+
+# --- Sección 2. Análisis exploratorio ---
 if menu == "2. Análisis exploratorio":
     st.header("2. Análisis Exploratorio de Datos")
 
@@ -54,6 +57,8 @@ if menu == "2. Análisis exploratorio":
         analisis_exploratorio(df)
     else:
         st.warning("Primero debes cargar un archivo en la opción 1.")
+
+# --- Sección 3. outliers ---
 if menu == '3. outliers':
     st.header("3. outliers")
     if st.session_state.df_actual is not None:
@@ -64,5 +69,3 @@ if menu == '3. outliers':
 
 
 
-# --- Aquí seguirían las demás secciones ---
-# (Análisis estadístico, detección outliers, clustering, visualizaciones, resumen)
