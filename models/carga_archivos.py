@@ -48,6 +48,8 @@ def mostrar_archivos():
                 st.subheader(f"Vista previa de {archivos_seleccionados[0]}")
                 #Se llama para la limpieza de datos
                 df = limpieza_basica(df)
+
+                
                 #Se muestran los datos en un dataframe
                 st.dataframe(df.head())
                                

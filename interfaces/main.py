@@ -13,15 +13,14 @@ from models.clustering import *
 
 st.set_page_config(page_title="Análisis Automático de Datos", layout="wide")
 
-st.title("Sistema Inteligente de Análisis Automatizado de Datos")
 
 
 # Menú lateral para seleccionar la sección
-st.sidebar.title("User Experience")
+st.sidebar.title("Dashboard")
 
 # Menú lateral para seleccionar la sección
 menu = st.sidebar.radio(
-    "hh",
+    "------------------------",
     (
         "1. Carga de archivos",
         "2. Análisis exploratorio",
@@ -43,7 +42,8 @@ if "df_actual" not in st.session_state:
 
 # --- Sección 1. Carga de archivos ---
 if menu == "1. Carga de archivos":
-    st.header("1. Carga de archivos")
+    st.title("Sistema Inteligente de Análisis Automatizado de Datos")
+    st.header("Carga de archivos")
 
     uploaded_files = st.file_uploader(
         "Carga uno o varios archivos CSV o Excel",
@@ -66,7 +66,7 @@ if menu == "2. Análisis exploratorio":
 
 # --- Sección 3. outliers ---
 if menu == '3. outliers':
-    st.header("3. outliers")
+    st.header("outliers")
     if st.session_state.df_actual is not None:
         df = st.session_state.df_actual
         outliers(df)
@@ -75,7 +75,7 @@ if menu == '3. outliers':
 
 # --- Sección 4. Clustering ---
 if menu == '4. Clustering':
-    st.header("4. Clustering")
+    st.header("Clustering")
 
     if st.session_state.df_actual is not None:
         if 'outlier_general' in st.session_state.df_actual.columns:
