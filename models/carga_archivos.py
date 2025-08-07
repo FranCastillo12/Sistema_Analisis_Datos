@@ -29,30 +29,30 @@ def mostrar_archivos():
         for archivo_nombre in st.session_state.data_diccio:
             #se imprime el nombre del archivo
             st.write(f"- {archivo_nombre}")
-
-
+            
         #select para que el usuario seleccione los archivos de los subidos 
         archivos_seleccionados = st.multiselect(
-            "Selecciona uno o más archivos para analizar / combinar",
+            "Selecciona uno o más archivos para analizar o combinar",
             options=list(st.session_state.data_diccio.keys())
         )
 
         #Si se seleccionan archivos entra en el if
         if archivos_seleccionados:
-
+            
             #Solo se selecciona un archivo
             if len(archivos_seleccionados) == 1:
+                
                 #En df se guarda los datos que st.session_state.data_diccio[0] 
                 df = st.session_state.data_diccio[archivos_seleccionados[0]]
 
                 st.subheader(f"Vista previa de {archivos_seleccionados[0]}")
+                
                 #Se llama para la limpieza de datos
                 df = limpieza_basica(df)
 
                 
                 #Se muestran los datos en un dataframe
                 st.dataframe(df.head())
-                               
                 #Se guardan los datos limptos para el uso en los otras opciones
                 st.session_state["df_actual"] = df
 
@@ -98,9 +98,9 @@ def limpieza_basica(df: pd.DataFrame) -> pd.DataFrame:
 
     #Recorre las columnas que tienen datos object o string
     for col in df.select_dtypes(include=['object', 'string']).columns:
-        #Pasa los daatos de cada columna a minuscula
+        #Pasa los datos de cada columna a minuscula
         df.loc[:, col] = df[col].str.lower().str.strip()
-   
+        
     #se imprimen los dataframen ya limpios
     st.write(f"Dimensiones después de limpieza: {df.shape}")
     return df

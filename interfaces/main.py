@@ -57,7 +57,7 @@ if menu == "1. Carga de archivos":
 
 # --- Sección 2. Análisis exploratorio ---
 if menu == "2. Análisis exploratorio":
- 
+
     if st.session_state.df_actual is not None:
         df = st.session_state.df_actual
         analisis_exploratorio(df)
@@ -78,6 +78,7 @@ if menu == '4. Clustering':
     st.header("Clustering")
 
     if st.session_state.df_actual is not None:
+        
         if 'outlier_general' in st.session_state.df_actual.columns:
             #Se guardan el df_filtrado los datos que en la columna outlier_general traen false
             df_filtrado = st.session_state.df_actual[~st.session_state.df_actual['outlier_general']].copy()      
