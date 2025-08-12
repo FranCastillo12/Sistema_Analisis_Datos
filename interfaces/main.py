@@ -9,7 +9,7 @@ from models.analisis_exploratotio import *
 from models.analisis import *
 from models.outliers import *
 from models.clustering import *
-
+from models.prediccion_datos import *
 
 st.set_page_config(page_title="Análisis Automático de Datos", layout="wide")
 
@@ -25,7 +25,8 @@ menu = st.sidebar.radio(
         "1. Carga de archivos",
         "2. Análisis exploratorio",
         "3. outliers",
-        "4. Clustering"
+        "4. Clustering",
+        "5. Predicción de datos"
     )
 )
 
@@ -90,6 +91,18 @@ if menu == '4. Clustering':
 
     else:
         st.warning("Primero debes cargar un archivo en la opción 1.")
+        
+# --- Sección 4. Predicción de datos ---        
+if menu == '5. Predicción de datos':
+    #Pasar a unos el df que se genera en el clustering
+    if st.session_state.df_actual is not None:
+        
+        df = st.session_state.df_actual
+        prediccion_datos(df)
+    else:
+        st.warning("Primero debes cargar un archivo en la opción 1.")
+
+    
 
 
 
