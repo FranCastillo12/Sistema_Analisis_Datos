@@ -104,13 +104,14 @@ def clustering(df: pd.DataFrame):
         else:
             # usar PCA para reducción a 2D
             pca = PCA(n_components=2, random_state=42)
+            #trasforma los datos en solo dos variables
             componentes = pca.fit_transform(datos_escalados)
             df_pca = pd.DataFrame(componentes, columns=['PC1', 'PC2'])
             df_pca['cluster'] = clusters.astype(str)
 
             sns.scatterplot(
                 x='PC1', y='PC2',
-                hue='cluster',
+                hue='cluster', #los puntos se colorean según el cluster al que pertenecen.
                 palette='tab10',
                 data=df_pca,
                 s=80,
