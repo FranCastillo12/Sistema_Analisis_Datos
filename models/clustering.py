@@ -78,15 +78,13 @@ def clustering(df: pd.DataFrame):
         # Sugerencia de uso 
         st.markdown("- Estos grupos pueden representar distintos perfiles o segmentos. Considera analizar cada cluster por separado para descubrir patrones únicos.")
         
-        
-        
-
         # Visualización de clusters
         st.subheader("Visualización de Clusters")
 
         fig, ax = plt.subplots(figsize=(8,6))
 
         if len(variables) == 2:
+            
             # Si solo hay dos variables, graficar directamente
             sns.scatterplot(
                 x=variables[0], y=variables[1],
