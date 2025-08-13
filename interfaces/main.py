@@ -9,7 +9,7 @@ from models.analisis_exploratotio import *
 from models.analisis import *
 from models.outliers import *
 from models.clustering import *
-from models.prediccion_datos import *
+
 
 st.set_page_config(page_title="Análisis Automático de Datos", layout="wide")
 
@@ -20,13 +20,12 @@ st.sidebar.title("Dashboard")
 
 # Menú lateral para seleccionar la sección
 menu = st.sidebar.radio(
-    "------------------------",
+    "Seleccione una opción",
     (
         "1. Carga de archivos",
         "2. Análisis exploratorio",
         "3. outliers",
         "4. Clustering",
-        "5. Predicción de datos"
     )
 )
 
@@ -63,46 +62,29 @@ if menu == "2. Análisis exploratorio":
         df = st.session_state.df_actual
         analisis_exploratorio(df)
     else:
-        st.warning("Primero debes cargar un archivo en la opción 1.")
+        st.error("Primero debes cargar un archivo en la opción 1.")
 
 # --- Sección 3. outliers ---
 if menu == '3. outliers':
-    st.header("outliers")
     if st.session_state.df_actual is not None:
         df = st.session_state.df_actual
         outliers(df)
     else:
-        st.warning("Primero debes cargar un archivo en la opción 1.")
+        st.error("Primero debes cargar un archivo en la opción 1.")
 
 # --- Sección 4. Clustering ---
 if menu == '4. Clustering':
     st.header("Clustering")
 
     if st.session_state.df_actual is not None:
-        
         if 'outlier_general' in st.session_state.df_actual.columns:
             #Se guardan el df_filtrado los datos que en la columna outlier_general traen false
             df_filtrado = st.session_state.df_actual[~st.session_state.df_actual['outlier_general']].copy()      
             st.info(f"Se usarán {df_filtrado.shape[0]} registros después de filtrar outliers.")
         else:
             #Si no se paso por la opcion de outliers se utliliza el data frame original
-            df_filtrado = df.copy()
+            df_filtrado = st.session_state.df_actual.copy()
         clustering(df_filtrado)     
 
     else:
-        st.warning("Primero debes cargar un archivo en la opción 1.")
-        
-# --- Sección 4. Predicción de datos ---        
-if menu == '5. Predicción de datos':
-    #Pasar a unos el df que se genera en el clustering
-    if st.session_state.df_actual is not None:
-        
-        df = st.session_state.df_actual
-        prediccion_datos(df)
-    else:
-        st.warning("Primero debes cargar un archivo en la opción 1.")
-
-    
-
-
-
+        st.error("Primero debes cargar un archivo en la opción 1.")

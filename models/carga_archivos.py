@@ -66,21 +66,23 @@ def mostrar_archivos():
                 #Se verifica si los dataframes tienen las mismas columnas
                 columnas_primero = set(dfs[0].columns)
                 mismo_esquema = all(set(df.columns) == columnas_primero for df in dfs)
+                
+                
                 #Si tienen el mismo esquema
                 if mismo_esquema:
                     df_comb = pd.concat(dfs, ignore_index=True)
+                    df_comb = limpieza_basica(df_comb)
+                    
                     st.dataframe(df_comb.head())
-                    st.write("### Tipos exactos de datos por columna:")
-                    tipos_exactos = pd.DataFrame({
-                    'Columna': df.columns,
-                    'Tipo de dato': df.dtypes.astype(str)
-                    })
 
-                    st.dataframe(tipos_exactos)
                     st.session_state["df_actual"] = df_comb
 
                 else:
                     st.warning("Los archivos seleccionados no tienen la misma estructura de columnas y no se pueden combinar.")
+                    
+            #Se descarga un csv con los datos limpios       
+            st.download_button("Descargar datos limpios", df.to_csv(index=False), file_name="datos_limpios.csv")
+
 
 
                     #Funcion para limpiar los dataframe escogidos
